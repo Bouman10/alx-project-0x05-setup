@@ -9,9 +9,22 @@ const Home: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleGenerateImage = async () => {
-    console.log("Generating Images");
-    console.log(process.env.NEXT_PUBLIC_GPT_API_KEY)
-  };
+  setIsLoading(true);
+  const resp = await fetch('/api/generate-image', {
+    method: 'POST',
+    body: JSON.stringify({ prompt }),
+    headers: { 'Content-type': 'application/json' }
+  });
+
+  if (!resp.ok) {
+    setIsLoading(false);
+    return;
+  }
+
+  const data = await resp.json();
+  setImageUrl(data.message);
+  setIsLoading(false);
+};
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
